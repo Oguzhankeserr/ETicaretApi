@@ -118,6 +118,8 @@ namespace ETicaretAPI.API.Controllers
             await _productWriteRepository.SaveAsync();
             return Ok();
             //GitHub Test
+            //tst2
+            //
         }
 
         [HttpPost("[action]")]
