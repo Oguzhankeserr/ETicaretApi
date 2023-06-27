@@ -42,5 +42,5 @@ namespace ETicaretAPI.Infrastructure
                     break;
             }
         }
-    }//bn
+    }
 }

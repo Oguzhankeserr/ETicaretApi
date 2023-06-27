@@ -9,6 +9,7 @@ using ETicaretAPI.Persistence.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Formats.Asn1;
@@ -31,6 +32,8 @@ namespace ETicaretAPI.API.Controllers
         readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
         readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
         readonly IStorageService _storageService;
+        readonly IConfiguration configuration;
+
 
         public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository,
             IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository,
@@ -38,7 +41,7 @@ namespace ETicaretAPI.API.Controllers
             IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository,
             IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository,
             IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository,
-            IStorageService storageService, ILocalStorage localStorage)
+            IStorageService storageService, ILocalStorage localStorage, IConfiguration configuration)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
@@ -50,6 +53,7 @@ namespace ETicaretAPI.API.Controllers
             _invoiceFileReadRepository = invoiceFileReadRepository;
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _storageService = storageService;
+            this.configuration = configuration;
         }
 
         [HttpGet]
@@ -127,16 +131,36 @@ namespace ETicaretAPI.API.Controllers
         {
             List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", Request.Form.Files);
 
+            Product product = await _productReadRepository.GetByIdAsync(id);
+
+
+
             await _productImageFileWriteRepository.AddRangeAsync(result.Select(r => new ProductImageFile
             {
                 FileName = r.fileName,
                 Path = r.pathOrContainerName,
-                Storage = _storageService.StorageName
+                Storage = _storageService.StorageName,
+                Product = new List<Product>() { product }
             }).ToList());
 
             await _productImageFileWriteRepository.SaveAsync();
 
             return Ok();
+
+
+
+
+
+            //foreach (var r in result)
+            //{
+            //    product.ProductImageFiles.Add(new()
+            //    {
+            //        FileName = r.fileName,
+            //        Path = r.pathOrContainerName,
+            //        Storage = _storageService.StorageName,
+            //        Product = new List<Product>() { product }
+            //    });
+            //}
 
 
             ////var datas = await _fileService.UploadAsync("resource/files", Request.Form.Files);
@@ -153,20 +177,18 @@ namespace ETicaretAPI.API.Controllers
 
 
         }
+
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductImages(string id)
+        {
+            Product? product = await _productReadRepository.Table.Include(p => p.ProductImageFiles).FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+            return Ok(product.ProductImageFiles.Select(p => new
+            {
+                Path = $"{configuration["BaseStorageUrl"]}/{p.Path}",
+                p.FileName
+            }));
+        }
     }
 }
-
-
-
-
-
-
-
-
-//await _productWriteRepository.AddRangeAsync(new()
-//{
-//    new() { Id = Guid.NewGuid(), Name = "Product 1", Price =100, CreateDate = DateTime.UtcNow, Stock = 10},
-//    new() { Id = Guid.NewGuid(), Name = "Product 2", Price =200, CreateDate = DateTime.UtcNow, Stock = 20},
-//    new() { Id = Guid.NewGuid(), Name = "Product 3", Price =300, CreateDate = DateTime.UtcNow, Stock = 130}
-//});
-//var count = await _productWriteRepository.SaveAsync();
