@@ -187,8 +187,18 @@ namespace ETicaretAPI.API.Controllers
             return Ok(product.ProductImageFiles.Select(p => new
             {
                 Path = $"{configuration["BaseStorageUrl"]}/{p.Path}",
-                p.FileName
+                p.FileName,
+                p.Id
             }));
+        }
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteProductImage(string id,string imageId)
+        {
+            Product? product = await _productReadRepository.Table.Include(p => p.ProductImageFiles).FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+            ProductImageFile productImageFile = product.ProductImageFiles.FirstOrDefault(p => p.Id == Guid.Parse(imageId));
+            product.ProductImageFiles.Remove(productImageFile);
+            await _productWriteRepository.SaveAsync();
+            return Ok();
         }
     }
 }
