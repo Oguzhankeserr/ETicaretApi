@@ -1,3 +1,4 @@
+using ETicaretAPI.Application;
 using ETicaretAPI.Application.Abstractions.Storage;
 using ETicaretAPI.Application.Abstractions.Storage.Local;
 using ETicaretAPI.Application.Repositories;
@@ -18,6 +19,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 //builder.Services.AddStorage(StorageType.Azure);
 //builder.Services.AddStorage<LocalStorage>();
@@ -32,18 +34,6 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod();
         });
 });
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy(name: MyAllowSpecificOrigins,
-//                      builder =>
-//                      {
-//                          builder.WithOrigins("http://example.com",
-//                                              "http://www.contoso.com");
-//                      });
-//});
-
-
 
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Application.Features.Queries.GetAllProduct
+namespace ETicaretAPI.Application.Features.Queries.Product.GetAllProduct
 {
     public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, GetAllProductQueryResponse>
     {
@@ -21,7 +21,7 @@ namespace ETicaretAPI.Application.Features.Queries.GetAllProduct
             GetAllProductQueryResponse getAllProductQueryResponse = new();
 
             getAllProductQueryResponse.TotalCount = _productReadRepository.GetAll(false).Count();
-            getAllProductQueryResponse.Products = _productReadRepository.GetAll(false).Skip(request.Pagination.Page * request.Pagination.Size).Take(request.Pagination.Size).Select(p => new
+            getAllProductQueryResponse.Products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size).Select(p => new
             {
                 p.Id,
                 p.Name,
