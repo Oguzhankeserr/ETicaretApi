@@ -8,7 +8,7 @@ using ETicaretAPI.Infrastructure.Filter;
 using ETicaretAPI.Infrastructure.Services.Storage;
 using ETicaretAPI.Infrastructure.Services.Storage.Azure;
 using ETicaretAPI.Infrastructure.Services.Storage.Local;
-using ETicaretAPI.Persistence;
+using ETicaretAPI.Persistence;  
 using ETicaretAPI.Persistence.Contexts;
 using ETicaretAPI.Persistence.Repositories;
 using FluentValidation.AspNetCore;

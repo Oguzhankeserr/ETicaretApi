@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ETicaretAPI.Application.Features.Commands.Product.RemoveProduct
 {
-    public class RemoveProductCommandResponse : IRequest
+    public class RemoveProductCommandResponse //todo
     {
     }
 }
