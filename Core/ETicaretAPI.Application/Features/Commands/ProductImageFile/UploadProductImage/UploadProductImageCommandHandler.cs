@@ -16,12 +16,19 @@ namespace ETicaretAPI.Application.Features.Commands.ProductImageFile.UploadProdu
         readonly IProductReadRepository _productReadRepository;
         readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
+        public UploadProductImageCommandHandler(IStorageService storageService, IProductReadRepository productReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository)
+        {
+            _storageService = storageService;
+            _productReadRepository = productReadRepository;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
+        }
+
         public async Task<UploadProductImageCommandResponse> Handle(UploadProductImageCommandRequest request, CancellationToken cancellationToken)
         {
-            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", Request.Files);
+            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", request.Files);
+
 
             Domain.Entities.Product product = await _productReadRepository.GetByIdAsync(request.Id);
-
 
 
             await _productImageFileWriteRepository.AddRangeAsync(result.Select(r => new Domain.Entities.ProductImageFile
@@ -34,6 +41,7 @@ namespace ETicaretAPI.Application.Features.Commands.ProductImageFile.UploadProdu
 
             await _productImageFileWriteRepository.SaveAsync();
 
+            return new();
         }
     }
 }
