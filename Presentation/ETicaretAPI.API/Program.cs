@@ -1,4 +1,6 @@
 ﻿using ETicaretAPI.Application;
+using ETicaretAPI.Application.Abstractions.Services.Authentications;
+using ETicaretAPI.Application.Abstractions.Services;
 using ETicaretAPI.Application.Abstractions.Storage;
 using ETicaretAPI.Application.Abstractions.Storage.Local;
 using ETicaretAPI.Application.Repositories;
@@ -12,6 +14,7 @@ using ETicaretAPI.Infrastructure.Services.Storage.Local;
 using ETicaretAPI.Persistence;  
 using ETicaretAPI.Persistence.Contexts;
 using ETicaretAPI.Persistence.Repositories;
+using ETicaretAPI.Persistence.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -102,6 +105,13 @@ builder.Services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteReposito
 //******
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<ILocalStorage, LocalStorage>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IExternalAuthentication, AuthService>();
+builder.Services.AddScoped<IInternalAuthentication, AuthService>();
+builder.Services.AddHttpClient();
+
 //builder.Services.AddScoped<IStorage, T>();
 
 

@@ -1,7 +1,10 @@
 ﻿using Azure.Core;
+using ETicaretAPI.Application.Abstractions.Services;
+using ETicaretAPI.Application.DTOs.User;
 using ETicaretAPI.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,32 +16,29 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.CreateUser
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest,
 CreateUserCommandResponse>
     {
-        private readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
-        public CreateUserCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager)
+        readonly IUserService _userService;
+
+        public CreateUserCommandHandler(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-            IdentityResult result = await _userManager.CreateAsync(new()
+
+            CreateUserResponse response = await _userService.CreateAsync(new()
             {
-                Id = Guid.NewGuid().ToString(),
-                UserName=request.UserName,
-                Email=request.Email,
-                NameSurname=request.NameSurname
-
-            },request.Password);
-
-            CreateUserCommandResponse response = new() { Succeeded = result.Succeeded};
-
-            if (result.Succeeded)
-                response.Message = "Kullanıcı başarıyla oluşturulmuştur.";
-            else
-               foreach (var error in result.Errors)
-                    response.Message += $"{error.Code} - {error.Description}\n";
-                
-            return response;
+                Email = request.Email,
+                NameSurname = request.NameSurname,
+                Password = request.Password,
+                PasswordConfirm = request.PasswordConfirm,
+                UserName = request.UserName
+            });
+            return new()
+            {
+                Message = response.Message,
+                Succeeded = response.Succeeded
+            };
         }
     }
 }

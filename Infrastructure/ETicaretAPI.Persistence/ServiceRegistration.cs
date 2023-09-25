@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using ETicaretAPI.Application.Features.Commands.AppUser.CreateUser;
 using MediatR;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ETicaretAPI.Application.Abstractions.Services;
+using ETicaretAPI.Persistence.Services;
+using ETicaretAPI.Application.Abstractions.Services.Authentications;
 
 namespace ETicaretAPI.Persistence
 {
@@ -31,9 +34,6 @@ namespace ETicaretAPI.Persistence
             services.AddDbContext<ETicaretAPIDbContext>(options => options.UseSqlServer(Configuration.ConnectionString), ServiceLifetime.Singleton);
             //services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ETicaretAPIDbContext>().AddDefaultTokenProviders();
 
-            //services.AddScoped<UserManager<Domain.Entities.Identity.AppUser>>();
-
-
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
 
@@ -51,8 +51,14 @@ namespace ETicaretAPI.Persistence
 
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
             services.AddScoped<IInvoiceFileWriteRepository,InvoiceFileWriteRepository>();
+            //******
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
-            //IInvoiceFileReadRepository
+            services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IInternalAuthentication, AuthService>();
+
+            services.AddHttpClient();
         }
     }
 }
