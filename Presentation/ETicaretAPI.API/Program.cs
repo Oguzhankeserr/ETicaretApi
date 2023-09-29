@@ -31,6 +31,7 @@ using Serilog.Context;
 using ETicaretAPI.API.Configurations.ColumnWriters;
 using Microsoft.AspNetCore.HttpLogging;
 using NpgsqlTypes;
+using ETicaretAPI.API.Extensions;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -171,6 +172,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 app.UseStaticFiles();
 
 app.UseSerilogRequestLogging();

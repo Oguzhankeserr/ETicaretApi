@@ -157,6 +157,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Middlewares\" />
     <Folder Include="obj\Debug\net6.0\staticwebassets\" />
     <Folder Include="wwwroot\resource\files\" />
   </ItemGroup>
