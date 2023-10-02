@@ -32,6 +32,8 @@ using ETicaretAPI.API.Configurations.ColumnWriters;
 using Microsoft.AspNetCore.HttpLogging;
 using NpgsqlTypes;
 using ETicaretAPI.API.Extensions;
+using ETicaretAPI.SignalR;
+using ETicaretAPI.SignalR.Hubs;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -39,6 +41,7 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddSignalRServices();
 
 //builder.Services.AddStorage(StorageType.Azure);
 builder.Services.AddStorage<LocalStorage>();
@@ -50,7 +53,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
         });
 });
 
@@ -194,5 +197,6 @@ app.Use(async(context, next) =>
 });
 
 app.MapControllers();
+app.MapHubs();
 
 app.Run();

@@ -23,7 +23,7 @@ namespace ETicaretAPI.Application.Features.Queries.Product.GetAllProduct
         {
             GetAllProductQueryResponse getAllProductQueryResponse = new();
             _logger.LogInformation("Get All Products");
-            throw new Exception("Hata Alındı");
+
             getAllProductQueryResponse.TotalCount = _productReadRepository.GetAll(false).Count();
             getAllProductQueryResponse.Products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size).Select(p => new
             {
