@@ -10,7 +10,7 @@ namespace ETicaretAPI.Infrastructure.Filter
 {
     public class ValidationFilter : IAsyncActionFilter
     {
-        public async Task OnActionExecutionAsync(ActionExecutingContext context,ActionExecutionDelegate next)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.ModelState.IsValid)
             {
@@ -22,7 +22,13 @@ namespace ETicaretAPI.Infrastructure.Filter
                 context.Result = new BadRequestObjectResult(errors);
                 return;
             }
-            await next();
+
+            var resultContext = await next();
+            if (resultContext.Result is ObjectResult objectResult && objectResult.StatusCode == 200)
+            {
+                // Eğer yanıt 200 OK ise, Status Code'u 200 OK olarak ayarla
+                objectResult.StatusCode = 200;
+            }
         }
     }
 }

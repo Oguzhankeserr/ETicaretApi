@@ -31,7 +31,13 @@ namespace ETicaretAPI.Persistence
 
         public static void AddPersistenceServices(this IServiceCollection services)
         {
-            services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString), ServiceLifetime.Singleton);
+            services.AddScoped<ETicaretAPIDbContext>(provider =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ETicaretAPIDbContext>();
+                optionsBuilder.UseNpgsql(Configuration.ConnectionString);
+                return new ETicaretAPIDbContext(optionsBuilder.Options);
+            });
+            //services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString), ServiceLifetime.Singleton);
             //services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ETicaretAPIDbContext>().AddDefaultTokenProviders();
 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
@@ -52,6 +58,12 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
             services.AddScoped<IInvoiceFileWriteRepository,InvoiceFileWriteRepository>();
             //******
+            services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+            services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
+
+            services.AddScoped<IBasketReadRepository, BasketReadRepository>();
+            services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
+            //******
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
 
@@ -59,6 +71,10 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IInternalAuthentication, AuthService>();
 
             services.AddHttpClient();
+
+            services.AddScoped<IBasketService, BasketService>();
+            //******
+
         }
     }
 }

@@ -34,11 +34,12 @@ using NpgsqlTypes;
 using ETicaretAPI.API.Extensions;
 using ETicaretAPI.SignalR;
 using ETicaretAPI.SignalR.Hubs;
-
+//Scoped'ları unutma!
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.Services.AddPersistenceServices();
+builder.Services.AddHttpContextAccessor();//Client'dan gelen request neticesinde oluşturulan httpContext nesnesine katmanlardaki class'lar üzerinden (business logic) erişebilmemizi sağlayan bir servistir.
+builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddSignalRServices();
@@ -155,8 +156,17 @@ builder.Services.AddScoped<ILocalStorage, LocalStorage>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddScoped<IExternalAuthentication, AuthService>();
 builder.Services.AddScoped<IInternalAuthentication, AuthService>();
+//******
+builder.Services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+builder.Services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
+
+builder.Services.AddScoped<IBasketReadRepository, BasketReadRepository>();
+builder.Services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
+
+builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddHttpClient();
 
 //builder.Services.AddScoped<IStorage, T>();FileService

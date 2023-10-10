@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace ETicaretAPI.Application.Features.Queries.ProductImageFile.GetProductImages
 {
@@ -27,9 +28,9 @@ namespace ETicaretAPI.Application.Features.Queries.ProductImageFile.GetProductIm
 
             return product?.ProductImageFiles.Select(p => new GetProductImagesQueryResponse
             {
-                Path = $"{configuration["BaseStorageUrl"]}/{p.Path}",
+                Path = String.Concat("LocalStorageUrl", p.Path),
                 FileName = p.FileName,
-                Id =p.Id
+                Id = p.Id
             }).ToList();
         }
     }
