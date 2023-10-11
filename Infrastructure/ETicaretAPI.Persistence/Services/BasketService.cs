@@ -75,7 +75,7 @@ namespace ETicaretAPI.Persistence.Services
             {
                 BasketItem _basketItem = await _basketItemReadRepository.GetSingleAsync(bi => bi.BasketId == basket.Id && bi.ProductId == Guid.Parse(basketItem.ProductId));
                 if (_basketItem != null)
-                    _basketItem.Quantity += basketItem.Quantity;
+                     _basketItem.Quantity += basketItem.Quantity; // dikkat
                 else
                     await _basketItemWriteRepository.AddAsync(new()
                     {
