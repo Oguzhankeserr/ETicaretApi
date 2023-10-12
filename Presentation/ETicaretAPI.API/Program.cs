@@ -168,6 +168,8 @@ builder.Services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
 
 builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddHttpClient();
+//******
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 //builder.Services.AddScoped<IStorage, T>();FileService
 
